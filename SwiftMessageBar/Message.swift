@@ -4,6 +4,11 @@
 
 import UIKit
 
+public enum MessageBackground {
+  case color(UIColor)
+  case blur(UIBlurEffect.Style)
+}
+
 final class Message: UIView {
 
   var isHit = false
@@ -12,6 +17,7 @@ final class Message: UIView {
   private let uuid = UUID()
   private var title: String?
   private var message: String?
+  private var background: MessageBackground!
   private var titleFontColor: UIColor!
   private var messageFontColor: UIColor!
   private var icon: UIImage?
@@ -38,7 +44,7 @@ final class Message: UIView {
     return paragraphStyle
   }
   
-  init(type: MessageType, title: String?, message: String?, backgroundColor: UIColor, titleFontColor: UIColor,
+  init(type: MessageType, title: String?, message: String?, background: MessageBackground, titleFontColor: UIColor,
        messageFontColor: UIColor, icon: UIImage?, duration: TimeInterval, dismiss: Bool = true, callback: Callback?,
        languageDirection: NSLocale.LanguageDirection, titleFont: UIFont, messageFont: UIFont, accessoryView: UIView?) {
     self.type = type
@@ -54,14 +60,16 @@ final class Message: UIView {
     self.titleFont = titleFont
     self.messageFont = messageFont
     self.accessoryView = accessoryView
+    self.background = background
     
     super.init(frame: .zero)
     
-    self.backgroundColor = backgroundColor
     usesAutoLayout(true)
   }
   
   func configureSubviews(topAnchor: NSLayoutYAxisAnchor) {
+    configureBackground()
+    
     let iconImageView = makeIconView()
     let titleLabel = makeTitleLabel()
     let messageLabel = makeMessageLabel()
@@ -84,16 +92,31 @@ final class Message: UIView {
     }
 
     addSubview(contentStackView)
-    configureConstraints(withTopAnchor: topAnchor)
+    configureConstraints(withTopAnchor: topAnchor, bottomAnchorr: layoutMarginsGuide.bottomAnchor, for: contentStackView)
   }
   
-  private func configureConstraints(withTopAnchor topAnchor: NSLayoutYAxisAnchor) {
-    contentStackView.usesAutoLayout(true)
+  private func configureBackground() {
+    switch background {
+    case let .color(color):
+      backgroundColor = color
+    case let .blur(style):
+      backgroundColor = .clear
+      let blurView = UIVisualEffectView(effect: UIBlurEffect(style: style))
+      addSubview(blurView)
+      configureConstraints(withTopAnchor: topAnchor, bottomAnchorr: bottomAnchor, for: blurView)
+    case .none:
+      break
+    }
+  }
+  
+  private func configureConstraints(withTopAnchor topAnchor: NSLayoutYAxisAnchor, bottomAnchorr: NSLayoutYAxisAnchor,
+                                    for view: UIView) {
+    view.usesAutoLayout(true)
     NSLayoutConstraint.activate([
-      contentStackView.rightAnchor.constraint(equalTo: rightAnchor),
-      contentStackView.leftAnchor.constraint(equalTo: leftAnchor),
-      contentStackView.bottomAnchor.constraint(equalTo: layoutMarginsGuide.bottomAnchor),
-      contentStackView.topAnchor.constraint(equalTo: topAnchor),
+      view.rightAnchor.constraint(equalTo: rightAnchor),
+      view.leftAnchor.constraint(equalTo: leftAnchor),
+      view.bottomAnchor.constraint(equalTo: bottomAnchor),
+      view.topAnchor.constraint(equalTo: topAnchor),
     ])
   }
   

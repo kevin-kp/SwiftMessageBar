@@ -11,21 +11,21 @@ public final class SwiftMessageBar {
   public struct Config {
 
     public struct Defaults {
-      public static let errorColor: UIColor = .red
-      public static let successColor: UIColor = .green
-      public static let infoColor: UIColor = .blue
+      public static let errorBackground: MessageBackground = .color(.red)
+      public static let successBackground: MessageBackground = .color(.green)
+      public static let infoBackground: MessageBackground = .color(.blue)
       public static let titleColor: UIColor = .white
       public static let messageColor: UIColor = .white
       public static let isStatusBarHidden = false
       public static let titleFont: UIFont = .boldSystemFont(ofSize: 16)
       public static let messageFont: UIFont = .systemFont(ofSize: 14)
       public static let isHapticFeedbackEnabled = true
-      public static let windowLevel:UIWindow.Level = .normal
+      public static let windowLevel: UIWindow.Level = .normal
     }
 
-    let errorColor: UIColor
-    let successColor: UIColor
-    let infoColor: UIColor
+    let errorBackground: MessageBackground
+    let successBackground: MessageBackground
+    let infoBackground: MessageBackground
     let titleColor: UIColor
     let messageColor: UIColor
     let isStatusBarHidden: Bool
@@ -37,9 +37,9 @@ public final class SwiftMessageBar {
     let isHapticFeedbackEnabled: Bool
     let windowLevel: UIWindow.Level
 
-    public init(errorColor: UIColor = Defaults.errorColor,
-                successColor: UIColor = Defaults.successColor,
-                infoColor: UIColor = Defaults.infoColor,
+    public init(errorBackground: MessageBackground = Defaults.errorBackground,
+                successBackground: MessageBackground = Defaults.successBackground,
+                infoBackground: MessageBackground = Defaults.infoBackground,
                 titleColor: UIColor = Defaults.titleColor,
                 messageColor: UIColor = Defaults.messageColor,
                 isStatusBarHidden: Bool = Defaults.isStatusBarHidden,
@@ -50,9 +50,9 @@ public final class SwiftMessageBar {
                 messageFont: UIFont = Defaults.messageFont,
                 isHapticFeedbackEnabled: Bool = Defaults.isHapticFeedbackEnabled,
                 windowLevel: UIWindow.Level = Defaults.windowLevel) {
-      self.errorColor = errorColor
-      self.successColor = successColor
-      self.infoColor = infoColor
+      self.errorBackground = errorBackground
+      self.successBackground = successBackground
+      self.infoBackground = infoBackground
       self.titleColor = titleColor
       self.messageColor = messageColor
       self.isStatusBarHidden = isStatusBarHidden
@@ -68,9 +68,9 @@ public final class SwiftMessageBar {
 
     public class Builder {
 
-      private var errorColor: UIColor?
-      private var successColor: UIColor?
-      private var infoColor: UIColor?
+      private var errorBackground: MessageBackground?
+      private var successBackground: MessageBackground?
+      private var infoBackground: MessageBackground?
       private var titleColor: UIColor?
       private var messageColor: UIColor?
       private var isStatusBarHidden: Bool?
@@ -85,18 +85,18 @@ public final class SwiftMessageBar {
       public init() {
       }
 
-      public func withErrorColor(_ color: UIColor) -> Builder {
-        errorColor = color
+      public func withErrorBackground(_ background: MessageBackground) -> Builder {
+        errorBackground = background
         return self
       }
 
-      public func withSuccessColor(_ color: UIColor) -> Builder {
-        successColor = color
+      public func withSuccessBackground(_ background: MessageBackground) -> Builder {
+        successBackground = background
         return self
       }
 
-      public func withInfoColor(_ color: UIColor) -> Builder {
-        infoColor = color
+      public func withInfoBackground(_ background: MessageBackground) -> Builder {
+        infoBackground = background
         return self
       }
 
@@ -151,9 +151,9 @@ public final class SwiftMessageBar {
       }
 
       public func build() -> Config {
-        Config(errorColor: errorColor ?? Defaults.errorColor,
-               successColor: successColor ?? Defaults.successColor,
-               infoColor: infoColor ?? Defaults.infoColor,
+        Config(errorBackground: errorBackground ?? Defaults.errorBackground,
+               successBackground: successBackground ?? Defaults.successBackground,
+               infoBackground: infoBackground ?? Defaults.infoBackground,
                titleColor: titleColor ?? Defaults.titleColor,
                messageColor: messageColor ?? Defaults.messageColor,
                isStatusBarHidden: isStatusBarHidden ?? Defaults.isStatusBarHidden,
@@ -185,6 +185,7 @@ public final class SwiftMessageBar {
     messageWindow.windowLevel = config.windowLevel
     messageWindow.backgroundColor = .clear
     messageWindow.messageBarController.statusBarHidden = config.isStatusBarHidden
+    messageWindow.messageBarController.modalPresentationStyle = .overCurrentContext
     messageWindow.rootViewController = messageWindow.messageBarController
     return messageWindow
   }
@@ -245,7 +246,7 @@ public final class SwiftMessageBar {
                           accessoryView: UIView? = nil,
                           callback: Callback? = nil) -> UUID {
     let message = Message(type: type, title: title, message: message,
-                          backgroundColor: type.backgroundColor(fromConfig: config), titleFontColor: config.titleColor,
+                          background: type.background(fromConfig: config), titleFontColor: config.titleColor,
                           messageFontColor: config.messageColor, icon: type.image(fromConfig: config), duration: duration,
                           dismiss: dismiss, callback: callback, languageDirection: languageDirection,
                           titleFont: config.titleFont, messageFont: config.messageFont, accessoryView: accessoryView)

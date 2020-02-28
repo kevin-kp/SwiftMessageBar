@@ -11,7 +11,7 @@ class ViewController: UIViewController {
   
   override func viewDidLoad() {
     super.viewDidLoad()
-    let messageBarConfig = SwiftMessageBar.Config(successColor: .orange, isStatusBarHidden: true)
+    let messageBarConfig = SwiftMessageBar.Config(successBackground: .blur(.dark), isStatusBarHidden: true)
     SwiftMessageBar.setSharedConfig(messageBarConfig)
   }
 

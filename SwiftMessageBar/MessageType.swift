@@ -7,14 +7,14 @@ import UIKit
 public enum MessageType {
   case error, success, info
 
-  func backgroundColor(fromConfig config: SwiftMessageBar.Config) -> UIColor {
+  func background(fromConfig config: SwiftMessageBar.Config) -> MessageBackground {
     switch self {
     case .error:
-      return config.errorColor
+      return config.errorBackground
     case .info:
-      return config.infoColor
+      return config.infoBackground
     case .success:
-      return config.successColor
+      return config.successBackground
     }
   }
 
